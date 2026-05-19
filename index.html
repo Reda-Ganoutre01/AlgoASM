@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AlgoASM Visualiser</title>
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --panel: #10141c;
+      --green: #00e65a;
+      --dim: #008232;
+      --orange: #ff781e;
+      --blue: #3ca0ff;
+      --purple: #a050ff;
+      --text: #c8dcc8;
+      --grey: #46505a;
+      --red: #e6323c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Consolas', monospace;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--panel);
+      border-bottom: 2px solid var(--grey);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    h1 { margin: 0; font-size: 20px; color: var(--blue); }
+    .tabs { display: flex; gap: 10px; }
+    .tab {
+      background: transparent; border: 1px solid var(--grey);
+      color: var(--text); padding: 5px 15px; cursor: pointer;
+      font-family: inherit; font-size: 16px;
+    }
+    .tab.active { background: var(--grey); color: #fff; }
+    
+    .controls {
+      display: flex; gap: 15px; align-items: center; margin-left: auto;
+    }
+    select, button, input {
+      background: var(--bg); color: var(--text);
+      border: 1px solid var(--grey); padding: 5px 10px;
+      font-family: inherit; font-size: 14px;
+    }
+    button { cursor: pointer; transition: 0.2s; }
+    button:hover { background: var(--grey); }
+    .btn-start { color: var(--green); border-color: var(--green); }
+    
+    #main-view {
+      flex: 1; position: relative; overflow: hidden; padding: 20px;
+    }
+    
+    /* Sorting View */
+    #sort-view, #tree-view, #graph-view {
+      display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; padding: 20px;
+    }
+    .active-view { display: block !important; }
+    
+    .bars-container {
+      display: flex; align-items: flex-end; gap: 2px;
+      height: calc(100% - 100px); width: 70%;
+    }
+    .bar {
+      flex: 1; background: var(--green); transition: height 0.05s, background-color 0.1s;
+    }
+    .stats-panel {
+      position: absolute; right: 20px; top: 20px;
+      width: 250px; border-left: 2px solid var(--grey); padding-left: 20px;
+    }
+    .stats-panel h2 { color: var(--blue); font-size: 16px; margin-top: 0; }
+    .stats-panel p { margin: 5px 0; font-size: 14px; }
+    .legend { margin-top: 30px; }
+    .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .box { width: 15px; height: 15px; }
+
+    /* Canvas for Trees/Graphs */
+    canvas { width: 100%; height: 100%; display: block; }
+    .status { position: absolute; bottom: 20px; right: 20px; color: var(--grey); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AlgoASM v1.0</h1>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('sort')">[ SORT ]</button>
+      <button class="tab" onclick="switchTab('tree')">[ TREE ]</button>
+      <button class="tab" onclick="switchTab('graph')">[ GRAPH ]</button>
+    </div>
+    <div class="controls">
+      <select id="algo-select">
+        <option value="bubble">Bubble Sort</option>
+        <option value="selection">Selection Sort</option>
+        <option value="insertion">Insertion Sort</option>
+      </select>
+      <button class="btn-start" id="start-btn" onclick="toggleRun()">► START</button>
+      <button onclick="resetApp()">↺ RESET</button>
+      <label>Speed:</label>
+      <input type="range" id="speed" min="10" max="200" value="50" dir="rtl" />
+    </div>
+  </header>
+
+  <div id="main-view">
+    <!-- SORTING -->
+    <div id="sort-view" class="active-view">
+      <div class="bars-container" id="bars"></div>
+      <div class="stats-panel">
+        <h2>COMPLEXITY</h2>
+        <p>Best: <span id="c-best">O(n)</span></p>
+        <p>Avg: <span id="c-avg">O(n²)</span></p>
+        <p>Worst: <span id="c-worst">O(n²)</span></p>
+        <p>Space: <span id="c-space">O(1)</span></p>
+        
+        <h2 class="legend">LEGEND</h2>
+        <div class="legend-item"><div class="box" style="background:var(--orange)"></div> Compare A</div>
+        <div class="legend-item"><div class="box" style="background:var(--red)"></div> Compare B</div>
+        <div class="legend-item"><div class="box" style="background:var(--purple)"></div> Sorted</div>
+        <div class="legend-item"><div class="box" style="background:var(--green)"></div> Default</div>
+      </div>
+    </div>
+
+    <!-- TREE -->
+    <div id="tree-view">
+      <canvas id="tree-canvas"></canvas>
+      <div style="position:absolute; top:20px; left:20px;">
+        <h2 style="color:var(--blue); margin:0;">Binary Search Tree</h2>
+        <p style="margin:5px 0;">Insert/Search: O(log n) avg | O(n) worst</p>
+      </div>
+    </div>
+
+    <!-- GRAPH -->
+    <div id="graph-view">
+      <canvas id="graph-canvas"></canvas>
+      <div style="position:absolute; top:20px; left:20px;">
+        <h2 style="color:var(--blue); margin:0;" id="graph-title">Breadth First Search (BFS)</h2>
+        <p style="margin:5px 0;">Time: O(V+E) | Space: O(V)</p>
+      </div>
+    </div>
+    
+    <div class="status" id="status-text">; PAUSED</div>
+  </div>
+
+  <script>
+    // GLOBAL STATE
+    let currentTab = 'sort';
+    let isRunning = false;
+    let timer = null;
+    let speedMs = 50;
+    
+    // Sort State
+    let arr = [];
+    const N = 40;
+    let sortGen = null;
+    
+    // Graph State
+    const G_NODES = [
+      {x: 400, y: 100}, {x: 250, y: 200}, {x: 550, y: 200},
+      {x: 150, y: 350}, {x: 350, y: 350}, {x: 650, y: 350},
+      {x: 150, y: 500}, {x: 350, y: 500}, {x: 650, y: 500}
+    ];
+    const G_EDGES = [
+      [0,1],[0,2],[1,0],[1,3],[1,4],[2,0],[2,5],
+      [3,1],[3,6],[4,1],[4,7],[5,2],[5,8],[6,3],[7,4],[8,5]
+    ];
+    let graphVis = new Array(9).fill(false);
+    let graphCur = -1;
+    let graphGen = null;
+
+    // Tree State
+    let bstRoot = null;
+    let treeVals = [50, 30, 70, 20, 40, 60, 80, 10, 25];
+    
+    function setStatus(text, color) {
+      const el = document.getElementById('status-text');
+      el.textContent = "; " + text;
+      el.style.color = `var(--${color})`;
+    }
+
+    // TABS
+    function switchTab(tab) {
+      isRunning = false; updateBtn();
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      document.querySelectorAll('#main-view > div').forEach(d => d.classList.remove('active-view'));
+      document.getElementById(tab + '-view').classList.add('active-view');
+      currentTab = tab;
+      
+      const sel = document.getElementById('algo-select');
+      sel.innerHTML = '';
+      if(tab === 'sort') {
+        sel.innerHTML = '<option value="bubble">Bubble Sort</option><option value="selection">Selection Sort</option><option value="insertion">Insertion Sort</option>';
+      } else if(tab === 'graph') {
+        sel.innerHTML = '<option value="bfs">BFS</option><option value="dfs">DFS</option>';
+      } else {
+        sel.innerHTML = '<option value="bst">BST Insert</option>';
+      }
+      resetApp();
+    }
+
+    // INIT
+    function initSort() {
+      arr = Array.from({length: N}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+      renderBars(-1, -1, false);
+      const algo = document.getElementById('algo-select').value;
+      if(algo==='bubble') sortGen = bubbleSort();
+      if(algo==='selection') sortGen = selectionSort();
+      if(algo==='insertion') sortGen = insertionSort();
+    }
+    
+    function initTree() {
+      const cvs = document.getElementById('tree-canvas');
+      cvs.width = cvs.clientWidth; cvs.height = cvs.clientHeight;
+      bstRoot = null;
+      treeVals.forEach(v => bstInsert(v));
+      drawTree();
+    }
+
+    function initGraph() {
+      const cvs = document.getElementById('graph-canvas');
+      cvs.width = cvs.clientWidth; cvs.height = cvs.clientHeight;
+      graphVis.fill(false); graphCur = -1;
+      const algo = document.getElementById('algo-select').value;
+      document.getElementById('graph-title').textContent = algo === 'bfs' ? "Breadth First Search (BFS)" : "Depth First Search (DFS)";
+      graphGen = algo === 'bfs' ? bfs() : dfs();
+      drawGraph();
+    }
+
+    function resetApp() {
+      isRunning = false; updateBtn();
+      if(timer) clearTimeout(timer);
+      if(currentTab === 'sort') initSort();
+      if(currentTab === 'tree') initTree();
+      if(currentTab === 'graph') initGraph();
+      setStatus("PAUSED", "grey");
+    }
+
+    // RUN LOOP
+    function toggleRun() {
+      isRunning = !isRunning;
+      updateBtn();
+      if(isRunning) {
+        setStatus("RUNNING", "green");
+        step();
+      } else {
+        setStatus("PAUSED", "grey");
+      }
+    }
+    
+    function updateBtn() {
+      const btn = document.getElementById('start-btn');
+      btn.textContent = isRunning ? "‖ PAUSE" : "► START";
+      btn.style.color = isRunning ? "var(--orange)" : "var(--green)";
+      btn.style.borderColor = isRunning ? "var(--orange)" : "var(--green)";
+    }
+
+    function step() {
+      if(!isRunning) return;
+      let done = false;
+      speedMs = document.getElementById('speed').value;
+      
+      if(currentTab === 'sort') {
+        const res = sortGen.next();
+        if(res.done) done = true;
+      } else if(currentTab === 'graph') {
+        const res = graphGen.next();
+        drawGraph();
+        if(res.done) done = true;
+      } else {
+        done = true; // Tree is static drawing for now
+      }
+      
+      if(done) {
+        isRunning = false; updateBtn();
+        setStatus("DONE", "purple");
+        if(currentTab === 'sort') renderBars(-1, -1, true);
+      } else {
+        timer = setTimeout(step, speedMs);
+      }
+    }
+
+    // SORTING ALGORITHMS
+    function renderBars(cA, cB, finished) {
+      const cont = document.getElementById('bars');
+      cont.innerHTML = '';
+      arr.forEach((val, i) => {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = `${(val / N) * 100}%`;
+        if(finished) bar.style.background = 'var(--purple)';
+        else if(i === cA) bar.style.background = 'var(--orange)';
+        else if(i === cB) bar.style.background = 'var(--red)';
+        cont.appendChild(bar);
+      });
+    }
+
+    function swap(i, j) {
+      let t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+
+    function* bubbleSort() {
+      for(let i=0; i<N; i++) {
+        for(let j=0; j<N-i-1; j++) {
+          renderBars(j, j+1, false); yield;
+          if(arr[j] > arr[j+1]) { swap(j, j+1); renderBars(j, j+1, false); yield; }
+        }
+      }
+    }
+
+    function* selectionSort() {
+      for(let i=0; i<N; i++) {
+        let min = i;
+        for(let j=i+1; j<N; j++) {
+          renderBars(min, j, false); yield;
+          if(arr[j] < arr[min]) min = j;
+        }
+        if(min !== i) { swap(i, min); renderBars(i, min, false); yield; }
+      }
+    }
+
+    function* insertionSort() {
+      for(let i=1; i<N; i++) {
+        let j = i;
+        while(j > 0 && arr[j-1] > arr[j]) {
+          renderBars(j-1, j, false); yield;
+          swap(j, j-1);
+          j--;
+        }
+      }
+    }
+
+    // GRAPH ALGORITHMS
+    function drawGraph() {
+      const cvs = document.getElementById('graph-canvas');
+      const ctx = cvs.getContext('2d');
+      ctx.clearRect(0,0, cvs.width, cvs.height);
+      
+      // Edges
+      ctx.lineWidth = 2; ctx.strokeStyle = '#46505a';
+      G_EDGES.forEach(([u,v]) => {
+        if(u<v) {
+          ctx.beginPath(); ctx.moveTo(G_NODES[u].x, G_NODES[u].y);
+          ctx.lineTo(G_NODES[v].x, G_NODES[v].y); ctx.stroke();
+        }
+      });
+      // Nodes
+      G_NODES.forEach((n, i) => {
+        ctx.beginPath(); ctx.arc(n.x, n.y, 22, 0, Math.PI*2);
+        ctx.fillStyle = graphVis[i] ? '#a050ff' : '#10141c';
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = (i === graphCur) ? '#ff781e' : '#00e65a';
+        ctx.stroke();
+        ctx.fillStyle = (i === graphCur) ? '#ff781e' : (graphVis[i] ? '#c8dcc8' : '#00e65a');
+        ctx.font = '16px Consolas'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(i, n.x, n.y);
+      });
+    }
+
+    function* bfs() {
+      let q = [0]; graphVis[0] = true;
+      while(q.length > 0) {
+        let u = q.shift(); graphCur = u; yield;
+        for(let [a,b] of G_EDGES) {
+          if(a===u && !graphVis[b]) { graphVis[b]=true; q.push(b); yield; }
+        }
+      }
+      graphCur = -1;
+    }
+
+    function* dfs() {
+      let s = [0];
+      while(s.length > 0) {
+        let u = s.pop();
+        if(!graphVis[u]) {
+          graphVis[u] = true; graphCur = u; yield;
+          // Reverse order to push to keep left-to-right visual
+          let nbrs = G_EDGES.filter(e => e[0]===u).map(e=>e[1]).reverse();
+          for(let v of nbrs) if(!graphVis[v]) s.push(v);
+        }
+      }
+      graphCur = -1;
+    }
+
+    // TREE ALGORITHM
+    class TNode {
+      constructor(v, x, y, level) {
+        this.v = v; this.left = null; this.right = null;
+        this.x = x; this.y = y; this.level = level;
+      }
+    }
+    function bstInsert(val) {
+      if(!bstRoot) { bstRoot = new TNode(val, document.getElementById('tree-canvas').clientWidth/2, 80, 1); return; }
+      let cur = bstRoot;
+      while(true) {
+        let offset = 180 / cur.level;
+        if(val < cur.v) {
+          if(!cur.left) { cur.left = new TNode(val, cur.x - offset, cur.y + 70, cur.level+1); break; }
+          cur = cur.left;
+        } else {
+          if(!cur.right) { cur.right = new TNode(val, cur.x + offset, cur.y + 70, cur.level+1); break; }
+          cur = cur.right;
+        }
+      }
+    }
+    function drawTree() {
+      const cvs = document.getElementById('tree-canvas');
+      const ctx = cvs.getContext('2d');
+      ctx.clearRect(0,0, cvs.width, cvs.height);
+      function drawN(n) {
+        if(!n) return;
+        ctx.lineWidth = 2; ctx.strokeStyle = '#008232';
+        if(n.left) { ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(n.left.x, n.left.y); ctx.stroke(); drawN(n.left); }
+        if(n.right) { ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(n.right.x, n.right.y); ctx.stroke(); drawN(n.right); }
+        ctx.beginPath(); ctx.arc(n.x, n.y, 18, 0, Math.PI*2);
+        ctx.fillStyle = '#10141c'; ctx.fill();
+        ctx.strokeStyle = '#00e65a'; ctx.stroke();
+        ctx.fillStyle = '#00e65a'; ctx.font = '14px Consolas';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(n.v, n.x, n.y);
+      }
+      drawN(bstRoot);
+    }
+
+    document.getElementById('algo-select').addEventListener('change', resetApp);
+    window.addEventListener('resize', () => { if(currentTab==='tree') drawTree(); if(currentTab==='graph') drawGraph(); });
+    resetApp();
+  </script>
+</body>
+</html>
