@@ -5,8 +5,8 @@
   
   **Un Visualiseur d'Algorithmes Moderne et Interactif**
 
-  [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-  [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+  [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+  [![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
   [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
   [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
@@ -83,14 +83,22 @@ Pendant l'exécution d'un algorithme, le tableau de bord latéral offre des info
 
 ## 🚀 Installation & Lancement
 
-L'application est codée de manière native (**Vanilla JS/CSS**). Aucune installation complexe n'est requise !
+L'application est construite avec **React** et **Vite**.
 
 1. **Clonez le dépôt :**
    ```bash
    git clone https://github.com/votre-nom/AlgoASM.git
+   cd AlgoASM
    ```
-2. **Lancez l'application :**
-   Ouvrez simplement le fichier `index.html` dans n'importe quel navigateur web moderne.
+2. **Installez les dépendances :**
+   ```bash
+   npm install
+   ```
+3. **Lancez l'environnement de développement :**
+   ```bash
+   npm run dev
+   ```
+   L'application sera accessible sur `http://localhost:5173`.
 
 ---
 
