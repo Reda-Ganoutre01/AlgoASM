@@ -108,5 +108,5 @@ Pour une expérience utilisateur parfaite, vous pouvez utiliser votre clavier :
 ---
 
 <div align="center">
-  <p>Fait avec ❤️ par Reda & Youssef</p>
+  <p>Fait  par Reda & Youssef</p>
 </div>
