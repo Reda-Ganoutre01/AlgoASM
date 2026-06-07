@@ -45,6 +45,11 @@ Visualisez en temps réel les échanges et comparaisons des éléments d'un tabl
 * **Tri rapide** (Quick Sort)
 * **Tri fusion** (Merge Sort)
 
+<div align="center">
+  <img src="assets/sort.png" alt="Aperçu du mode Tri" width="80%">
+  <p><i>Aperçu du mode Tri (Sorting)</i></p>
+</div>
+
 ### 🌳 2. Structures d'Arbres (Trees)
 Construisez des arbres dynamiquement avec des animations fluides des nœuds et des branches.
 * **Arbre binaire de recherche** (BST - Binary Search Tree)
@@ -59,6 +64,11 @@ Construisez des arbres dynamiquement avec des animations fluides des nœuds et d
 Visualisez la découverte et l'exploration des nœuds.
 * **Parcours en largeur** (BFS - Breadth-First Search)
 * **Parcours en profondeur** (DFS - Depth-First Search)
+
+<div align="center">
+  <img src="assets/graphs.png" alt="Aperçu du mode Graphes" width="80%">
+  <p><i>Aperçu du mode Graphes (Graphs)</i></p>
+</div>
 
 ---
 
