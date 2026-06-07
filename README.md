@@ -1,62 +1,102 @@
-# AlgoASM — Visualiseur d'Algorithmes
+<div align="center">
+  <img src="assets/hero.png" alt="AlgoASM Hero Banner" width="100%">
+  
+  # ⚡ AlgoASM
+  
+  **Un Visualiseur d'Algorithmes Moderne et Interactif**
 
-**AlgoASM** est une application web interactive conçue pour visualiser de manière dynamique les algorithmes fondamentaux en informatique. Le projet propose une interface moderne et intuitive pour explorer étape par étape le fonctionnement des algorithmes de tri, des structures d'arbres et des algorithmes de parcours de graphes.
+  [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+  [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+  [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+  [Fonctionnalités](#-fonctionnalités-principales) •
+  [Installation](#-installation--lancement) •
+  [Raccourcis](#️-raccourcis-clavier)
+</div>
+
+---
+
+## 📖 À Propos du Projet
+
+**AlgoASM** est une application web interactive conçue pour visualiser de manière dynamique les algorithmes fondamentaux en informatique. Doté d'une interface très moderne (Dark Mode / Néon), ce projet permet de comprendre intuitivement et visuellement le fonctionnement des algorithmes de tri, des structures d'arbres et de graphes.
 
 **Auteurs :** Reda Ganoutre & Youssef Elmeliani
 
 ---
 
+## 🎬 Démonstration (Animation)
+
+> **Astuce :** Vous pouvez enregistrer une petite vidéo ou GIF de l'interface et la placer dans `assets/demo.gif` pour qu'elle s'affiche ici !
+
+<div align="center">
+  <img src="assets/demo.gif" alt="Placez votre GIF de démonstration ici" width="80%">
+</div>
+
+---
+
 ## 🌟 Fonctionnalités Principales
 
-Le visualiseur est divisé en trois modes principaux :
-
-### 1. Algorithmes de Tri (Sort)
-Permet de visualiser en temps réel les échanges et comparaisons des éléments d'un tableau.
+### 📊 1. Algorithmes de Tri (Sorting)
+Visualisez en temps réel les échanges et comparaisons des éléments d'un tableau.
 * **Tri à bulles** (Bubble Sort)
 * **Tri par sélection** (Selection Sort)
 * **Tri par insertion** (Insertion Sort)
 * **Tri rapide** (Quick Sort)
 * **Tri fusion** (Merge Sort)
 
-### 2. Arbres (Trees)
-Insertion et construction d'arbres avec animations fluides des nœuds et des liens.
+### 🌳 2. Structures d'Arbres (Trees)
+Construisez des arbres dynamiquement avec des animations fluides des nœuds et des branches.
 * **Arbre binaire de recherche** (BST - Binary Search Tree)
-* **Arbre Rouge-Noir** (RBT - Red-Black Tree) avec gestion de l'équilibrage.
+* **Arbre Rouge-Noir** (RBT - Red-Black Tree) avec gestion des rotations et équilibrage.
 
-### 3. Graphes (Graphs)
-Visualisation de la traversée et de la découverte des nœuds au sein d'un graphe.
+<div align="center">
+  <img src="assets/trees.png" alt="Aperçu des arbres" width="80%">
+  <p><i>Aperçu du mode Arbres (Trees)</i></p>
+</div>
+
+### 🕸️ 3. Graphes (Graphs)
+Visualisez la découverte et l'exploration des nœuds.
 * **Parcours en largeur** (BFS - Breadth-First Search)
 * **Parcours en profondeur** (DFS - Depth-First Search)
 
 ---
 
-## 🛠️ Outils et Technologies
-* **HTML5** : Structure de l'application (`index.html`).
-* **CSS3** : Design moderne, animations fluides, mode sombre, responsive design (`style.css`).
-* **JavaScript (Vanilla)** : Logique algorithmique, manipulation du DOM et gestion du rendu sur Canvas (`script.js`).
-* Aucune bibliothèque externe n'est requise.
+## ⚙️ Statistiques & Suivi en temps réel
+
+Pendant l'exécution d'un algorithme, le tableau de bord latéral offre des informations précises :
+- 📈 **Compteurs :** Nombre exact de comparaisons et d'échanges.
+- ⏱️ **Complexité :** Affiche la complexité théorique Temporelle (Meilleur, Moyen, Pire cas) et Spatiale.
+- 💻 **Pseudo-Code Actif :** Suivi ligne par ligne du code source en direct avec l'animation.
 
 ---
 
-## 🚀 Comment utiliser l'application
+## 🚀 Installation & Lancement
 
-1. Clonez ce dépôt ou téléchargez les fichiers.
-2. Ouvrez simplement le fichier `index.html` dans votre navigateur web préféré (Chrome, Firefox, Edge, etc.).
-3. Cliquez sur **"CLICK TO CONTINUE"** à l'écran de démarrage.
-4. Sélectionnez la catégorie de votre choix via la roue animée (Sort, Trees, Graph).
-5. Utilisez le menu supérieur pour configurer la taille des données (`N`), la vitesse (`SPD`), et sélectionnez l'algorithme désiré.
-6. Cliquez sur **▶ START** pour lancer l'animation, ou **▸ STEP** pour avancer étape par étape.
-7. Vous pouvez également interagir avec le clavier :
-   * `Espace` : Lecture / Pause
-   * `Flèche Droite` : Avancer d'une étape
-   * `R` : Réinitialiser
-   * `+ / -` : Modifier la vitesse
+L'application est codée de manière native (**Vanilla JS/CSS**). Aucune installation complexe n'est requise !
+
+1. **Clonez le dépôt :**
+   ```bash
+   git clone https://github.com/votre-nom/AlgoASM.git
+   ```
+2. **Lancez l'application :**
+   Ouvrez simplement le fichier `index.html` dans n'importe quel navigateur web moderne.
 
 ---
 
-## 📊 Tableau de bord et Statistiques
-Pendant l'exécution d'un algorithme, la barre latérale affiche :
-* Le nombre de **comparaisons** et d'**échanges**.
-* La **complexité algorithmique** théorique (Meilleur, Moyen, Pire, Espace mémoire).
-* Le **pseudo-code** de l'algorithme avec surlignage de l'étape courante en temps réel.
-* Une légende dynamique et des informations détaillées selon l'algorithme choisi.
+## ⌨️ Raccourcis Clavier
+
+Pour une expérience utilisateur parfaite, vous pouvez utiliser votre clavier :
+
+| Touche | Action |
+| :--- | :--- |
+| `Espace` | Lecture / Pause de l'animation |
+| `Flèche Droite (→)` | Avancer d'une seule étape |
+| `R` | Réinitialiser les données courantes |
+| `+` / `-` | Modifier la vitesse de l'animation |
+
+---
+
+<div align="center">
+  <p>Fait avec ❤️ par Reda & Youssef</p>
+</div>
